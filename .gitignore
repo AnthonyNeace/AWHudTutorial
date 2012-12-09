@@ -1,0 +1,5 @@
+*.suo
+*/obj/*
+*/bin/*
+TestOP/seqs/*
+TestOP/sounds/*
