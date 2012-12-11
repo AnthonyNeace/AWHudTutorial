@@ -19,6 +19,9 @@ namespace AWHudTutorial
 
         static void Main()
         {
+            Console.Title = "AWHudTutorial";
+            Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+
             while (true)
             {
                 try

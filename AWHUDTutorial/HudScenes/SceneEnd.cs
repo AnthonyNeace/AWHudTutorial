@@ -48,7 +48,7 @@ namespace AWHudTutorial
             scene[HUD_BTN_PREV].Metrics = new Metric
             {
                 Origin = HudOrigin.Center,
-                Rect = new Rectangle(-200, 16, 128, 32)
+                Rect = new Rectangle(-128 - 44, 16, 128, 32)
             };
 
             scene[HUD_BTN_PREV].Clicked += (s, x, y) => { scene.GotoScene(SceneTut4.Create(s)); };

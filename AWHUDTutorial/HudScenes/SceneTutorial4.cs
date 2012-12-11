@@ -42,6 +42,8 @@ namespace AWHudTutorial
                     Rect = new Rectangle(222, 32, 64, 128),
                     Origin = HudOrigin.TopLeft
                 });
+            hudDiagramA.MainHud.Flags |= HudFlag.Highlight;
+            hudDiagramA.MainHud.Color = AW.Color.ColorRed;
             scene["diagramA"] = hudDiagramA;
 
             var hudDiagramB = new HudPanel(
