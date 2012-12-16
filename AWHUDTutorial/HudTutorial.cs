@@ -131,8 +131,11 @@ namespace AWHudTutorial
             user.LastSeen = DateTime.Now;
             user.Save();
 
+            // Allocate ID pool
+            HudPanel.IDPools[session] = 0;
+
+            // Create and show scene
             Log.Info("HUD", "Generating HUD for {0} (session {1})", name, session);
-            AWBot.HudClear(session);
             user.Scene = SceneIntro.Create(session);
 
             if (user.Hidden)
@@ -147,6 +150,9 @@ namespace AWHudTutorial
             var user = GetUser(name);
             user.Session = User.OFFLINE;
             user.Save();
+
+            // Deallocate pool
+            HudPanel.IDPools.Remove(sender.Attributes.AvatarSession);
         }
         #endregion
     }

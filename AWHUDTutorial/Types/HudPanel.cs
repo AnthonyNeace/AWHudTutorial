@@ -28,7 +28,16 @@ namespace AWHudTutorial.Types
 
     public class HudPanel : IDisposable
     {
-        public static int NextID = 1;
+        public static Dictionary<int, int> IDPools = new Dictionary<int,int>();
+
+        public static int GetNextID(int session)
+        {
+            if (IDPools[session]++ > 65535)
+                IDPools[session] = 1;
+
+            return IDPools[session];
+        }
+
         event HudPanelClick clicked;
         public event HudPanelClick Clicked
         {
@@ -70,7 +79,7 @@ namespace AWHudTutorial.Types
         }
 
         /// <summary>
-        /// Gets or sets the session this panel is attached to
+        /// Gets or sets the session (along with ID) this panel is attached to
         /// </summary>
         public int Session
         {
@@ -78,7 +87,13 @@ namespace AWHudTutorial.Types
             set
             {
                 MainHud.Session = value;
-                if (Shadowed) ShadowHud.Session = value;
+                MainHud.Id = GetNextID(value);
+
+                if (Shadowed)
+                {
+                    ShadowHud.Session = value;
+                    ShadowHud.Id = GetNextID(value);
+                }
             }
         }
 
@@ -103,7 +118,6 @@ namespace AWHudTutorial.Types
             this.Metrics = metric;
             MainHud = new Hud
             {
-                Id = NextID++,
                 SizeX = metric.Rect.Width,
                 SizeY = metric.Rect.Height,
                 X = metric.Rect.Left,
@@ -120,7 +134,6 @@ namespace AWHudTutorial.Types
                 var percentY = (MainHud.SizeY / 100) * 10;
                 ShadowHud = new Hud
                 {
-                    Id = NextID++,
                     Type = HudType.Image,
                     Text = "hud-shadow.png",
                     Flags = HudFlag.Stretch | HudFlag.Transition,
