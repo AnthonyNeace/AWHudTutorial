@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using AW;
 using AWHudTutorial.Types;
-using AW;
+using System.Drawing;
 
 namespace AWHudTutorial
 {
@@ -22,14 +17,14 @@ namespace AWHudTutorial
         {
             Log.Debug("Scenes", "Creating tutorial 4 scene for {0}", session);
             var scene = new HudScene { Session = session, Name = NAME };
-            var user = AWHT.BaseApp.GetUser(session);
-            var lang = user.Language;
+            var user  = AWHT.BaseApp.GetUser(session);
+            var lang  = user.Language;
 
             var hudTagline = new HudPanel(
-                Lang.Get(lang, "Tut4a"), AW.Color.ColorWhite,
+                Lang.Get(lang, "Tut4a"), Colors.White,
                 new Metric
                 {
-                    Rect = new Rectangle(-256, -100, 512, 64),
+                    Rectangle = new Rectangle(-256, -100, 512, 64),
                     Origin = HudOrigin.Bottom
                 },
                 true);
@@ -39,20 +34,22 @@ namespace AWHudTutorial
                 new Texture { Name = "hud-tut4b.png" },
                 new Metric
                 {
-                    Rect = new Rectangle(222, 32, 64, 128),
+                    Rectangle = new Rectangle(222, 32, 64, 128),
                     Origin = HudOrigin.TopLeft
                 });
+
             hudDiagramA.MainHud.Flags |= HudFlag.Highlight;
-            hudDiagramA.MainHud.Color = AW.Color.ColorRed;
-            scene["diagramA"] = hudDiagramA;
+            hudDiagramA.MainHud.Color  = Colors.Red;
+            scene["diagramA"]          = hudDiagramA;
 
             var hudDiagramB = new HudPanel(
                 new Texture { Name = "hud-tut4a.png" },
                 new Metric
                 {
-                    Rect = new Rectangle(64, 0, 64, 128),
+                    Rectangle = new Rectangle(64, 0, 64, 128),
                     Origin = HudOrigin.Center
                 });
+
             scene["diagramB"] = hudDiagramB;
 
             scene[HUD_BTN_NEXT] = HudPanel.CreateNext(lang);

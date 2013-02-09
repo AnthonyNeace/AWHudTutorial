@@ -1,18 +1,25 @@
-﻿using System;
+﻿using AW;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rectangle = System.Drawing.Rectangle;
-using AW;
 
 namespace AWHudTutorial.Types
 {
     public delegate void HudPanelClick (int session, int x, int y);
+
+    /// <summary>
+    /// Defines an AW texture pair with texture name and mask
+    /// </summary>
     public struct Texture
     {
         public string Name;
         public string Mask;
+
+        public Texture(string name, string mask = null)
+        {
+            this.Name = name;
+            this.Mask = mask;
+        }
 
         public override string ToString()
         {
@@ -20,21 +27,39 @@ namespace AWHudTutorial.Types
         }
     }
 
+    /// <summary>
+    /// Defines measurements for a hud panel
+    /// </summary>
     public struct Metric
     {
-        public Rectangle Rect;
+        public Rectangle Rectangle;
         public HudOrigin Origin;
+
+        public Metric(Rectangle rect, HudOrigin origin)
+        {
+            this.Rectangle = rect;
+            this.Origin    = origin;
+        }
+
+        public Metric(int x, int y, int w, int h, HudOrigin origin)
+        {
+            this.Rectangle = new Rectangle(x, y, w, h);
+            this.Origin    = origin;
+        }
     }
 
     public class HudPanel : IDisposable
     {
         public static Dictionary<int, int> IDPools = new Dictionary<int,int>();
 
-        public static int GetNextID(int session)
+        static string tag = "HudPanel";
+
+        public static int GetNextId(int session)
         {
-            if (IDPools[session]++ > 65535)
+            if (IDPools[session]++ > 1000)
                 IDPools[session] = 1;
 
+            Log.Fine( tag, "Next ID for session '{0}' is '{1}'", session, IDPools[session] );
             return IDPools[session];
         }
 
@@ -57,13 +82,12 @@ namespace AWHudTutorial.Types
         }
 
         public string Name;
-        public bool IsDisposed;
-        public bool IsVisible;
-        public Metric Metrics;
-        public Hud MainHud;
-        public Hud ShadowHud;
+        public bool   IsDisposed;
+        public bool   IsVisible;
+        public Hud    MainHud;
+        public Hud    ShadowHud;
 
-        public int Id { get { return MainHud.Id; } }
+        public int  Id       { get { return MainHud.Id; } }
         public bool Shadowed { get { return ShadowHud != null; } }
 
         /// <summary>
@@ -87,12 +111,33 @@ namespace AWHudTutorial.Types
             set
             {
                 MainHud.Session = value;
-                MainHud.Id = GetNextID(value);
+                MainHud.Id = GetNextId(value);
 
                 if (Shadowed)
                 {
                     ShadowHud.Session = value;
-                    ShadowHud.Id = GetNextID(value);
+                    ShadowHud.Id = GetNextId(value);
+                }
+            }
+        }
+
+        public Metric Metrics
+        {
+            set
+            {
+                MainHud.SizeX  = value.Rectangle.Width;
+                MainHud.SizeY  = value.Rectangle.Height;
+                MainHud.X      = value.Rectangle.Left;
+                MainHud.Y      = value.Rectangle.Top;
+                MainHud.Origin = value.Origin;
+
+                if ( Shadowed )
+                {
+                    ShadowHud.SizeX  = value.Rectangle.Width + 32;
+                    ShadowHud.SizeY  = value.Rectangle.Height + 32;
+                    ShadowHud.X      = value.Rectangle.Left - 16;
+                    ShadowHud.Y      = value.Rectangle.Top - 16;
+                    ShadowHud.Origin = value.Origin;
                 }
             }
         }
@@ -115,39 +160,28 @@ namespace AWHudTutorial.Types
 
         HudPanel(Metric metric, bool shadowed)
         {
-            this.Metrics = metric;
             MainHud = new Hud
             {
-                SizeX = metric.Rect.Width,
-                SizeY = metric.Rect.Height,
-                X = metric.Rect.Left,
-                Y = metric.Rect.Top,
-                ZOrder = 1,
-                Origin = metric.Origin,
+                ZOrder  = 1,
                 Opacity = 0.0f,
-                Flags = HudFlag.Transition | HudFlag.Stretch | HudFlag.Clamp
+                Flags   = HudFlag.Transition | HudFlag.Stretch | HudFlag.Clamp
             };
 
             if (shadowed)
             {
-                var percentX = (MainHud.SizeX / 100) * 10;
-                var percentY = (MainHud.SizeY / 100) * 10;
                 ShadowHud = new Hud
                 {
-                    Type = HudType.Image,
-                    Text = "hud-shadow.png",
-                    Flags = HudFlag.Stretch | HudFlag.Transition,
-                    SizeX = MainHud.SizeX + percentX,
-                    SizeY = MainHud.SizeY + percentY,
-                    X = MainHud.X - (percentX / 2),
-                    Y = MainHud.Y - (percentY / 2),
-                    ZOrder = 10,
-                    Color = 0x000000,
-                    Origin = MainHud.Origin,
+                    Type    = HudType.Image,
+                    Text    = "clr_white",
+                    Flags   = HudFlag.Stretch | HudFlag.Transition,                    
+                    ZOrder  = 10,
+                    Color   = new AW.Color(0xA8, 0xC0, 0xFF),
                     Opacity = 0.0f,
                     Session = this.Session
                 };
             }
+
+            this.Metrics = metric;
         }
 
         /// <summary>
@@ -158,7 +192,7 @@ namespace AWHudTutorial.Types
         {
             MainHud.Type = HudType.Image;
             MainHud.Text = asset.ToString();
-            MainHud.Color = Color.ColorWhite;
+            MainHud.Color = Colors.White;
         }
 
         /// <summary>
@@ -192,22 +226,12 @@ namespace AWHudTutorial.Types
         public void Show()
         {
             if (IsDisposed) return;
-            MainHud.Origin = Metrics.Origin;
-            MainHud.X = Metrics.Rect.X;
-            MainHud.Y = Metrics.Rect.Y;
-            MainHud.SizeX = Metrics.Rect.Width;
-            MainHud.SizeY = Metrics.Rect.Height;
             MainHud.Opacity = 1f;
             AWHT.Bot.HudCreate(MainHud);
 
             if (Shadowed)
             {
-                ShadowHud.Origin = Metrics.Origin;
-                ShadowHud.X = Metrics.Rect.X - 16;
-                ShadowHud.Y = Metrics.Rect.Y - 16;
-                ShadowHud.SizeX = Metrics.Rect.Width + 32;
-                ShadowHud.SizeY = Metrics.Rect.Height + 32;
-                ShadowHud.Opacity = 0.5f;
+                ShadowHud.Opacity = 1f;
                 AWHT.Bot.HudCreate(ShadowHud);
             }
 
@@ -238,44 +262,52 @@ namespace AWHudTutorial.Types
         public static HudPanel CreateNext(Languages lang)
         {
             var label = Lang.Get(lang, "Next");
-            return new HudPanel(label, AW.Color.ColorWhite,
+            var panel = new HudPanel(label, Colors.White,
                 new Metric
                 {
                     Origin = HudOrigin.Right,
-                    Rect = new Rectangle(-160, 0, 128, 32)
-                }, true) { Clickable = true };
+                    Rectangle = new Rectangle(-160, 0, 128, 32)
+                }, true);
+
+            panel.Clickable       = true;
+            panel.ShadowHud.Color = Colors.OrangeRed;
+            return panel;
         }
 
         public static HudPanel CreatePrev(Languages lang)
         {
             var label = Lang.Get(lang, "Prev");
-            return new HudPanel(label, AW.Color.ColorWhite,
+            var panel = new HudPanel(label, Colors.White,
                 new Metric
                 {
                     Origin = HudOrigin.Left,
-                    Rect = new Rectangle(32, 0, 128, 32)
-                }, true) { Clickable = true };
+                    Rectangle = new Rectangle(32, 0, 128, 32)
+                }, true);
+
+            panel.Clickable       = true;
+            panel.ShadowHud.Color = Colors.OrangeRed;
+            return panel;
         }
 
         public static HudPanel CreateHide(Languages lang)
         {
             var label = Lang.Get(lang, "Hide");
-            return new HudPanel(label, AW.Color.ColorWhite,
+            return new HudPanel(label, Colors.White,
                 new Metric
                 {
                     Origin = HudOrigin.Right,
-                    Rect = new Rectangle(-160, 64, 128, 32)
+                    Rectangle = new Rectangle(-160, 64, 128, 32)
                 }, true) { Clickable = true };
         }
 
         public static HudPanel CreateLanguage()
         {
             var label = Lang.Core.Get("Language");
-            return new HudPanel(label, AW.Color.ColorWhite,
+            return new HudPanel(label, Colors.White,
                 new Metric
                 {
                     Origin = HudOrigin.Right,
-                    Rect = new Rectangle(-160, 128, 128, 32)
+                    Rectangle = new Rectangle(-160, 128, 128, 32)
                 }, true) { Clickable = true };
         }
     }

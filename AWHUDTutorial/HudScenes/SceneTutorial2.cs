@@ -26,10 +26,10 @@ namespace AWHudTutorial
             var lang = user.Language;
 
             var hudTagline = new HudPanel(
-                Lang.Get(lang, "Tut2a"), AW.Color.ColorWhite,
+                Lang.Get(lang, "Tut2a"), Colors.White,
                 new Metric
                 {
-                    Rect = new Rectangle(-512, 64, 1024, 64),
+                    Rectangle = new Rectangle(-512, 64, 1024, 64),
                     Origin = HudOrigin.Top
                 },
                 true);
@@ -39,7 +39,7 @@ namespace AWHudTutorial
                 new Texture { Name = "hud-tut2a.png" },
                 new Metric
                 {
-                    Rect = new Rectangle(-300, 0, 256, 128),
+                    Rectangle = new Rectangle(-300, 0, 256, 128),
                     Origin = HudOrigin.Center
                 });
             scene["diagramA"] = hudDiagramA;

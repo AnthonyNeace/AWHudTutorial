@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using AW;
 using AWHudTutorial.Types;
-using AW;
+using System.Drawing;
 
 namespace AWHudTutorial
 {
@@ -25,10 +20,10 @@ namespace AWHudTutorial
             var lang = user.Language;
 
             var hudTagline = new HudPanel(
-                Lang.Get(lang, "End"), AW.Color.ColorWhite,
+                Lang.Get(lang, "End"), Colors.White,
                 new Metric
                 {
-                    Rect = new Rectangle(-512, -80, 1024, 64),
+                    Rectangle = new Rectangle(-512, -80, 1024, 64),
                     Origin = HudOrigin.Center
                 },
                 true);
@@ -36,19 +31,19 @@ namespace AWHudTutorial
 
             scene[SceneCommon.HUD_ATTRACT_TL] = SceneCommon.Attract(true);
             scene[SceneCommon.HUD_ATTRACT_BR] = SceneCommon.Attract(false);
-            scene[HUD_BTN_PREV] = HudPanel.CreatePrev(lang);
-            scene[HUD_BTN_HIDE] = HudPanel.CreateHide(lang);
+            scene[HUD_BTN_PREV]               = HudPanel.CreatePrev(lang);
+            scene[HUD_BTN_HIDE]               = HudPanel.CreateHide(lang);
 
             scene[HUD_BTN_HIDE].Metrics = new Metric
             {
                 Origin = HudOrigin.Center,
-                Rect = new Rectangle(44, 16, 128, 32)
+                Rectangle = new Rectangle(44, 16, 128, 32)
             };
 
             scene[HUD_BTN_PREV].Metrics = new Metric
             {
                 Origin = HudOrigin.Center,
-                Rect = new Rectangle(-128 - 44, 16, 128, 32)
+                Rectangle = new Rectangle(-128 - 44, 16, 128, 32)
             };
 
             scene[HUD_BTN_PREV].Clicked += (s, x, y) => { scene.GotoScene(SceneTut4.Create(s)); };

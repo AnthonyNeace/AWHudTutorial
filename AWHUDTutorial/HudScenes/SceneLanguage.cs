@@ -1,30 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using AW;
 using AWHudTutorial.Types;
-using AW;
+using System;
+using System.Drawing;
 
 namespace AWHudTutorial
 {
     public class SceneLanguage
     {
-        public const string NAME = "language";
+        public const string NAME       = "language";
         public const string HUD_CHOOSE = "choose";
+        public const string HUD_BG     = "bgfill";
 
         public static HudScene Create(int session)
         {
             Log.Debug("Scenes", "Creating language selection scene for {0}", session);
             var scene = new HudScene { Session = session, Name = NAME };
 
+            var background = SceneCommon.CreateBackground();
+            var b = 0;
+            foreach (var bg in background)
+            {
+                scene[HUD_BG + b] = bg;
+                b++;
+            }
+
             var hudChoose = new HudPanel(
-                "Select your language", AW.Color.ColorWhite,
+                "Select your language", Colors.White,
                 new Metric
                 {
-                    Rect = new Rectangle(-256, 64, 512, 64),
-                    Origin = HudOrigin.Top
+                    Rectangle = new Rectangle(-256, -128, 512, 64),
+                    Origin    = HudOrigin.Center
                 },
                 true);
 
@@ -37,10 +42,10 @@ namespace AWHudTutorial
                 var lang = langs[i];
                 var langLabel = Lang.Ini.Configs[lang].Get("Name");
                 var langButton = new HudPanel(
-                    langLabel, AW.Color.ColorWhite,
+                    langLabel, Colors.White,
                     new Metric
                     {
-                        Rect = new Rectangle(left, 64 * (i/2), 256, 32),
+                        Rectangle = new Rectangle(left, 64 * (i/2), 256, 32),
                         Origin = HudOrigin.Center,
                     },
                     true);

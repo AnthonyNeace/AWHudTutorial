@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using AW;
 using AWHudTutorial.Types;
-using AW;
+using System.Drawing;
 
 namespace AWHudTutorial
 {
@@ -16,27 +11,57 @@ namespace AWHudTutorial
 
         public static Metric METRIC_TLATTRACT = new Metric
         {
-            Rect = new Rectangle(0, 0, 512, 512),
+            Rectangle = new Rectangle(0, 0, 512, 512),
             Origin = HudOrigin.TopLeft
         };
 
         public static Metric METRIC_BRATTRACT = new Metric
         {
-            Rect = new Rectangle(-512, -512, 512, 512),
+            Rectangle = new Rectangle(-512, -512, 512, 512),
             Origin = HudOrigin.BottomRight
         };
 
-        static Metric METRIC_MINBUTTON = new Metric
-            {
-                Rect = new Rectangle(16, -128 - 16, 128, 128),
-                Origin = HudOrigin.BottomLeft,
-            };
+        public static Metric METRIC_MINBUTTON = new Metric
+        {
+            Rectangle = new Rectangle(16, -64 - 16, 64, 64),
+            Origin = HudOrigin.BottomLeft,
+        };
 
         public static HudPanel CreateMinimizeButton()
         {
             return new HudPanel(
                 new Texture { Name = "hud-minimized.png" },
                 METRIC_MINBUTTON, false);
+        }
+
+        public static HudPanel[] CreateBackground()
+        {
+            var panels = new HudPanel[4];
+
+            panels[0] = new HudPanel(
+                new Texture("hud-fill.png"),
+                new Metric(0, 0, 2048, 2048, HudOrigin.TopLeft));
+
+            panels[1] = new HudPanel(
+                new Texture("hud-fill.png"),
+                new Metric(2048, 0, 2048, 2048, HudOrigin.TopLeft));
+
+            panels[2] = new HudPanel(
+                new Texture("hud-fill.png"),
+                new Metric(0, 2048, 2048, 2048, HudOrigin.TopLeft));
+
+            panels[3] = new HudPanel(
+                new Texture("hud-fill.png"),
+                new Metric(2048, 2048, 2048, 2048, HudOrigin.TopLeft));
+
+            foreach (var pan in panels)
+            {
+                pan.MainHud.Color  = new AW.Color(0xE8, 0xEF, 0xFF);
+                //pan.MainHud.Color  = new AW.Color(0xA8, 0xC0, 0xFF);
+                pan.MainHud.ZOrder = 200;
+            }
+
+            return panels;
         }
 
         /// <summary>

@@ -11,6 +11,5 @@ namespace AWHudTutorial
     partial class AWHT
     {
         public HashSet<User> Users = new HashSet<User>();
-
     }
 }

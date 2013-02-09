@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AW;
-using AWHudTutorial.Types;
+﻿using AW;
+using System;
+using System.Threading;
+using System.Diagnostics;
 
 namespace AWHudTutorial
 {
     partial class AWHT
     {
         public Instance AWBot;
-        int connectionAttempts = 1;
 
         public void Connect()
         {
@@ -56,19 +52,13 @@ namespace AWHudTutorial
                 //    throw new Exception("No caretaker ability");
 
                 Log.Info("Network", "Connected to world {0}", world);
-                connectionAttempts = 1;
             }
             catch (Exception ex)
             {
-                if (connectionAttempts > 10)
-                    throw new Exception("Could not connect: " + ex.Message, ex);
-                else
-                {
-                    Log.Severe("Network", ex.ToString());
-                    Log.Warn("Network", "Failed to connect, attempt {0} out of 10", connectionAttempts);
-                    connectionAttempts++;
-                    Connect();
-                }
+                Log.Severe("Network", ex.ToString());
+                Log.Warn("Network", "Failed to connect, retrying in 30 seconds");
+                Thread.Sleep(1000 * 30);
+                Connect();
             }
         }
 
@@ -83,13 +73,10 @@ namespace AWHudTutorial
             Connect();
         }
 
-        /// <summary>
-        /// Destroys the vpInstance and attempts reconnection upon disconnect
-        /// </summary>
         void onDisconnect(IInstance sender, EventCancelToken token)
         {
-            Log.Severe("Warn", "Disconnected! Killing bot and reconnecting...");
-            Reconnect();
+            Log.Severe("Warn", "Disconnected! Going down...");
+            throw new Exception("Disconnected");
         }
     }
 }
