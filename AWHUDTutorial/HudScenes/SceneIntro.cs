@@ -23,24 +23,17 @@ namespace AWHudTutorial
             Log.Debug("Scenes", "Creating intro scene for {0}", session);
             var scene = new HudScene { Session = session, Name = NAME };
 
-            var background = SceneCommon.CreateBackground();
-            var i = 0;
-            foreach (var bg in background)
-            {
-                bg.MainHud.Color  = new AW.Color(0xA8, 0xC0, 0xFF);
-                scene[HUD_BG + i] = bg;
-                i++;
-            }
-
             var hudWelcome = new HudPanel(
                 new Texture { Name = "hud-welcome.png" },
                 new Metric
                 {
                     Rectangle = new Rectangle(-256, -200, 512, 128),
                     Origin = HudOrigin.Center
-                });
+                }, true);
 
-            scene[HUD_WELCOME] = hudWelcome;
+
+            hudWelcome.ShadowHud.Color = new AW.Color(0xA8, 0xC0, 0xFF);
+            scene[HUD_WELCOME]         = hudWelcome;
 
             var hudClickForHelp = new HudPanel(
                 Lang.Core.Get("ClickForHelp").Replace('|', '\n'), Colors.White,
@@ -54,7 +47,7 @@ namespace AWHudTutorial
                 new Texture { Name = "clr_white" },
                 new Metric
                 {
-                    Rectangle = new Rectangle(-1024, -50, 2048, 200),
+                    Rectangle = new Rectangle(-150, -50, 300, 200),
                     Origin    = HudOrigin.Center
                 });
 
@@ -63,7 +56,7 @@ namespace AWHudTutorial
             hudClickForHelp.Clickable      = true;
             hudClickForHelp.Clicked       += (s, x, y) =>
             {
-                var user = AWHT.BaseApp.GetUser(s);
+                var user = AWHT.Instance.GetUser(s);
 
                 if (user.Language != Languages.None)
                     scene.GotoScene( SceneTut1.Create(s) );
@@ -79,7 +72,7 @@ namespace AWHudTutorial
                 {
                     Rectangle = new Rectangle(16, -64 - 16, 64, 64),
                     Origin    = HudOrigin.BottomLeft,
-                });
+                }, true);
 
             hudClickToClose.Clickable  = true;
             hudClickToClose.Clicked   += (s, x, y) =>

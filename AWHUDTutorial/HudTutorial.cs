@@ -11,15 +11,16 @@ namespace AWHudTutorial
 {
     partial class AWHT
     {
-        public static Random        Random = new Random();
-        public static AWHT          BaseApp;
-        static        ConsoleLogger Logger;
-        static        bool          exiting;
+        public static AWHT          Instance;
+               static bool          exiting;
+        public static Instance Bot  { get { return Instance.AWBot; } }
 
-        public static Instance Bot { get { return BaseApp.AWBot; } }
+        public HashSet<User> Users = new HashSet<User>();
 
         static void Main()
         {
+            var logger = new ConsoleLogger();
+
             Console.CancelKeyPress        += onExit;
             Thread.CurrentThread.Priority  = ThreadPriority.Lowest;
 
@@ -27,20 +28,18 @@ namespace AWHudTutorial
             {
                 try
                 {   
-                    BaseApp                 = new AWHT();
-                    BaseApp.start();
-                    BaseApp.loop();
+                    Instance = new AWHT();
+                    Instance.start();
+                    Instance.loop();
                 }
                 catch (Exception e)
                 {
-                    Log.FullStackTrace(e);
+                    Log.LogFullStackTrace(e);
                     Log.Severe("AWHT", "Bot crashed; restarting...");
 
-                    BaseApp.Users = null;
-
-                    if ( BaseApp.AWBot != null )
+                    if ( Instance.AWBot != null )
                     {
-                        BaseApp.AWBot.Dispose();
+                        Instance.AWBot.Dispose();
                         Utility.Wait(1000);
                     }
                 }
@@ -51,11 +50,11 @@ namespace AWHudTutorial
         {
             exiting = true;
 
-            if ( BaseApp != null && BaseApp.AWBot != null )
+            if ( Instance != null && Instance.AWBot != null )
             {
                 Log.Info("HUD", "Exiting program, clearing huds for all users");
-                foreach ( var user in BaseApp.Users )
-                    BaseApp.AWBot.HudClear(user.Session);
+                foreach ( var user in Instance.Users )
+                    Instance.AWBot.HudClear(user.Session);
 
                 Utility.Wait(1000);
             }
@@ -66,9 +65,6 @@ namespace AWHudTutorial
         /// </summary>
         void start()
         {
-            if (Logger == null)
-                Logger = new ConsoleLogger();
-
             // Load settings files
             Lang.Load();
             Settings.Load();
@@ -86,7 +82,8 @@ namespace AWHudTutorial
         /// </summary>
         void loop()
         {
-            while (!exiting) {                   
+            while (!exiting)
+            {                   
                 Utility.Wait(-1);
                 Thread.Sleep(200);
             }
@@ -102,18 +99,14 @@ namespace AWHudTutorial
                 if (user.Name == name)
                     return user;
             
-            // Disk
-            if (Settings.Users.Contains(name))
+            // Forget setting if last seen a long time ago
+            if (!Settings.IsUserExpired(name))
             {
-                var user   = User.FromString(Settings.Users.Get(name));
-                var maxAge = Settings.Core.GetInt("MaxHoursPersist");
+                var userData = Settings.Users.Get(name);
+                var userObj  = new User(userData);
 
-                // Forget setting if last seen a long time ago
-                if (DateTime.Now.Subtract(user.LastSeen).TotalHours < maxAge)
-                {
-                    Users.Add(user);
-                    return user;
-                }
+                Users.Add(userObj);
+                return userObj;
             }
 
             // Create

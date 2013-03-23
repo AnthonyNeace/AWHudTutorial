@@ -16,13 +16,13 @@ namespace AWHudTutorial
             Log.Debug("Scenes", "Creating language selection scene for {0}", session);
             var scene = new HudScene { Session = session, Name = NAME };
 
-            var background = SceneCommon.CreateBackground();
+            /*var background = SceneCommon.CreateBackground();
             var b = 0;
             foreach (var bg in background)
             {
                 scene[HUD_BG + b] = bg;
                 b++;
-            }
+            }*/
 
             var hudChoose = new HudPanel(
                 "Select your language", Colors.White,
@@ -54,7 +54,7 @@ namespace AWHudTutorial
                 langButton.Clicked += (s, x, y) =>
                 {
                     Log.Fine("Language Scene", "Session {0} has chosen {1}", s, lang);
-                    AWHT.BaseApp.GetUser(s).Language = (Languages) Enum.Parse(typeof(Languages), lang);
+                    AWHT.Instance.GetUser(s).Language = (Languages) Enum.Parse(typeof(Languages), lang);
 
                     scene.GotoScene(SceneTut1.Create(s));
                 };

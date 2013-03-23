@@ -89,8 +89,8 @@ namespace AWHudTutorial.Types
             Log.Fine("Scene", "Minimizing scene {0} for {1}", Name, Session);
             if (minimizeHud != null) minimizeHud.Show();
 
-            AWHT.BaseApp.GetUser(session).Hidden = true;
-            AWHT.BaseApp.GetUser(session).Save();
+            AWHT.Instance.GetUser(session).Hidden = true;
+            AWHT.Instance.GetUser(session).Save();
 
             foreach (var panel in this)
                 panel.Hide(origin, x, y);
@@ -105,7 +105,7 @@ namespace AWHudTutorial.Types
 
         public void GotoScene(HudScene scn)
         {
-            AWHT.BaseApp.GetUser(session).Scene = scn;
+            AWHT.Instance.GetUser(session).Scene = scn;
             scn.Show();
         }
 
@@ -122,8 +122,8 @@ namespace AWHudTutorial.Types
         }
 
         void onMinClicked(int s, int x, int y) {
-            AWHT.BaseApp.GetUser(s).Hidden = false;
-            AWHT.BaseApp.GetUser(s).Save();
+            AWHT.Instance.GetUser(s).Hidden = false;
+            AWHT.Instance.GetUser(s).Save();
             this.Show();
         }
     }

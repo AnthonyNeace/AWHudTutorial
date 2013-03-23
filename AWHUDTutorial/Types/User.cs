@@ -9,19 +9,19 @@ namespace AWHudTutorial.Types
     public class User
     {
         public const string TOKEN_QUOTES = "%QUOTE";
-        public const int OFFLINE = -1;
+        public const int    OFFLINE = -1;
 
         public static bool IsTourist(string name)
         {
             return name.StartsWith("\"") && name.EndsWith("\"");
         }
 
-        public string Name;
+        public string    Name;
         public Languages Language = Languages.None;
-        public int Session;
-        public bool Hidden;
-        public DateTime LastSeen;
-        public bool Online { get { return Session != OFFLINE; } }
+        public int       Session;
+        public bool      Hidden;
+        public DateTime  LastSeen;
+        public bool      Online { get { return Session != OFFLINE; } }
 
         public HudScene scene;
         public HudScene Scene
@@ -37,15 +37,14 @@ namespace AWHudTutorial.Types
 
         }
 
-        public static User FromString(string data)
+        public User() {}
+        public User(string data)
         {
             var parts = data.Split(new[] { ',' }, StringSplitOptions.None);
-            return new User
-            {
-                Name = parts[0].Replace(TOKEN_QUOTES, "\""),
-                Hidden = bool.Parse(parts[1]),
-                LastSeen = DateTime.Parse(parts[2])
-            };
+
+            Name     = parts[0].Replace(TOKEN_QUOTES, "\"");
+            Hidden   = bool.Parse(parts[1]);
+            LastSeen = DateTime.Parse(parts[2]);
         }
 
         public override string ToString()
@@ -58,9 +57,9 @@ namespace AWHudTutorial.Types
 
         public void Save()
         {
-            Log.Debug("Users", "Saving settings for {0}", Name);
             Settings.Users.Set(Name, ToString());
             Settings.Ini.Save();
+            Log.Debug("Users", "Saved settings for {0}", Name);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AW;
 using AWHudTutorial.Types;
+using System;
 using System.Drawing;
 
 namespace AWHudTutorial
@@ -7,7 +8,7 @@ namespace AWHudTutorial
     public class SceneEnd
     {
         public const string NAME = "end";
-        public const string HUD_TAGLINE = "tagline";
+        public const string HUD_TAGLINE  = "tagline";
         public const string HUD_BTN_PREV = "btnPrev";
         public const string HUD_BTN_HIDE = "btnHide";
         public const string HUD_BTN_LANG = "btnLang";
@@ -16,7 +17,7 @@ namespace AWHudTutorial
         {
             Log.Debug("Scenes", "Creating end scene for {0}", session);
             var scene = new HudScene { Session = session, Name = NAME };
-            var user = AWHT.BaseApp.GetUser(session);
+            var user = AWHT.Instance.GetUser(session);
             var lang = user.Language;
 
             var hudTagline = new HudPanel(
@@ -27,12 +28,10 @@ namespace AWHudTutorial
                     Origin = HudOrigin.Center
                 },
                 true);
-            scene[HUD_TAGLINE] = hudTagline;
 
-            scene[SceneCommon.HUD_ATTRACT_TL] = SceneCommon.Attract(true);
-            scene[SceneCommon.HUD_ATTRACT_BR] = SceneCommon.Attract(false);
-            scene[HUD_BTN_PREV]               = HudPanel.CreatePrev(lang);
-            scene[HUD_BTN_HIDE]               = HudPanel.CreateHide(lang);
+            scene[HUD_TAGLINE]  = hudTagline;
+            scene[HUD_BTN_PREV] = HudPanel.CreatePrev(lang);
+            scene[HUD_BTN_HIDE] = HudPanel.CreateHide(lang);
 
             scene[HUD_BTN_HIDE].Metrics = new Metric
             {

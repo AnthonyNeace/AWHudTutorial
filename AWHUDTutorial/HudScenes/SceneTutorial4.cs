@@ -1,5 +1,6 @@
 ﻿using AW;
 using AWHudTutorial.Types;
+using System;
 using System.Drawing;
 
 namespace AWHudTutorial
@@ -17,7 +18,7 @@ namespace AWHudTutorial
         {
             Log.Debug("Scenes", "Creating tutorial 4 scene for {0}", session);
             var scene = new HudScene { Session = session, Name = NAME };
-            var user  = AWHT.BaseApp.GetUser(session);
+            var user  = AWHT.Instance.GetUser(session);
             var lang  = user.Language;
 
             var hudTagline = new HudPanel(

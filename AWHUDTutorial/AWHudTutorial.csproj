@@ -38,11 +38,13 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="Toolbox.Extensions">
+      <HintPath>..\..\Toolbox\Build\Toolbox.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Toolbox.Logger">
+      <HintPath>..\..\Toolbox\Build\Toolbox.Logger.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HudTutorial.Settings.cs" />
@@ -53,20 +55,15 @@
     <Compile Include="HudScenes\SceneTutorial1.cs" />
     <Compile Include="HudScenes\SceneCommon.cs" />
     <Compile Include="HudScenes\SceneLanguage.cs" />
-    <Compile Include="HudTutorial.User.cs" />
     <Compile Include="HudScenes\SceneIntro.cs" />
     <Compile Include="HudTutorial.Events.cs" />
     <Compile Include="HudTutorial.cs" />
     <Compile Include="HudTutorial.Language.cs" />
-    <Compile Include="HudTutorial.Logging.cs" />
     <Compile Include="HudTutorial.Network.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\HudPanel.cs" />
     <Compile Include="Types\HudScene.cs" />
     <Compile Include="Types\User.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AWSSDK\AW.Core\AW.Core.csproj">
